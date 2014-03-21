@@ -54,7 +54,6 @@
 		43EDA80518DBC1420021EF6A /* ThumbCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 43EDA80318DBC1420021EF6A /* ThumbCollectionCell.m */; };
 		43EDA80618DBC1420021EF6A /* ThumbCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 43EDA80418DBC1420021EF6A /* ThumbCollectionCell.xib */; };
 		43EDA80B18DBC2AB0021EF6A /* EXPhotoViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 43EDA80918DBC2AB0021EF6A /* EXPhotoViewer.m */; };
-		43EDA80C18DBC2AB0021EF6A /* EXPhotoViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 43EDA80A18DBC2AB0021EF6A /* EXPhotoViewer.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,7 +121,6 @@
 		43EDA80418DBC1420021EF6A /* ThumbCollectionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ThumbCollectionCell.xib; sourceTree = "<group>"; };
 		43EDA80818DBC2AB0021EF6A /* EXPhotoViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXPhotoViewer.h; sourceTree = "<group>"; };
 		43EDA80918DBC2AB0021EF6A /* EXPhotoViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXPhotoViewer.m; sourceTree = "<group>"; };
-		43EDA80A18DBC2AB0021EF6A /* EXPhotoViewer.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EXPhotoViewer.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,7 +276,6 @@
 			children = (
 				43EDA80818DBC2AB0021EF6A /* EXPhotoViewer.h */,
 				43EDA80918DBC2AB0021EF6A /* EXPhotoViewer.m */,
-				43EDA80A18DBC2AB0021EF6A /* EXPhotoViewer.xib */,
 			);
 			name = EXPhotoViewer;
 			path = ../../EXPhotoViewer;
@@ -363,7 +360,6 @@
 				43EDA7DA18DBBBD30021EF6A /* 14_woman.jpg in Resources */,
 				43EDA80618DBC1420021EF6A /* ThumbCollectionCell.xib in Resources */,
 				43EDA7F118DBBBD30021EF6A /* 7_woman.jpg in Resources */,
-				43EDA80C18DBC2AB0021EF6A /* EXPhotoViewer.xib in Resources */,
 				43EDA7DD18DBBBD30021EF6A /* 17_woman.jpg in Resources */,
 				43EDA7E418DBBBD30021EF6A /* 23_woman.jpg in Resources */,
 				43EDA7D618DBBBD30021EF6A /* 10_woman.jpg in Resources */,
@@ -615,6 +611,7 @@
 				43EDA7AE18DBBB430021EF6A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		43EDA7AF18DBBB430021EF6A /* Build configuration list for PBXNativeTarget "EXPhotoViewerDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -623,6 +620,7 @@
 				43EDA7B118DBBB430021EF6A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

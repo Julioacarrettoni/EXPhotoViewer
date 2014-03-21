@@ -8,11 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface EXPhotoViewer : UIViewController <UIScrollViewDelegate>{
-    IBOutlet UIScrollView *zoomeableScrollView;
-    IBOutlet UIImageView *theImageView;
-    IBOutlet UIView *dimView;
-}
+@interface EXPhotoViewer : UIViewController <UIScrollViewDelegate>
 
 + (void) showImageFrom:(UIImageView*) image;
 
