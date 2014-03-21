@@ -48,7 +48,7 @@
     [controller.view addSubview:self.view];
     
     theImageView.image = imageView.image;
-    self.originalImageRect = [imageView convertRect:imageView.frame toView:self.view];
+    self.originalImageRect = [imageView convertRect:imageView.bounds toView:self.view];
     theImageView.frame = self.originalImageRect;
     
     [UIView animateWithDuration:0.3 animations:^{
