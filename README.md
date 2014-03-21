@@ -6,6 +6,8 @@ It works with any UIImageView, just laying around, in a table, in a cell in a cu
 
 Whats the **"EX"** for? it is for **EX**TRA AWESOME!!!
 
+![image](https://raw.githubusercontent.com/Julioacarrettoni/EXPhotoViewer/master/screenshots/iPhone_animated.gif)
+
 ##What it does
 It will take the image and:
 
