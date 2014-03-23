@@ -42,6 +42,8 @@
     self.zoomeableScrollView = scrollView;
     
     UIImageView* imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.clipsToBounds = YES;
     [self.zoomeableScrollView addSubview: imageView];
     self.theImageView = imageView;
 }
