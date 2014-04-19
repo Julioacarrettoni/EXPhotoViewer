@@ -49,8 +49,12 @@
 }
 
 - (void) showImageFrom:(UIImageView*) imageView {
-    
     UIViewController* controller = [UIApplication sharedApplication].keyWindow.rootViewController;
+    
+    if ([controller presentedViewController]) {
+        controller = [controller presentedViewController];
+    }
+    
     self.tempViewContainer = [[UIView alloc] initWithFrame:controller.view.bounds];
     self.tempViewContainer.backgroundColor = controller.view.backgroundColor;
     controller.view.backgroundColor = [UIColor blackColor];
