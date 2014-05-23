@@ -20,6 +20,8 @@
 
 @end
 
+static CGFloat s_backgroundScale = 0.8f;
+
 @implementation EXPhotoViewer
 
 + (void) showImageFrom:(UIImageView*) imageView {
@@ -48,12 +50,17 @@
     self.theImageView = imageView;
 }
 
-- (void) showImageFrom:(UIImageView*) imageView {
+-(UIViewController *) rootViewController{
     UIViewController* controller = [UIApplication sharedApplication].keyWindow.rootViewController;
     
     if ([controller presentedViewController]) {
         controller = [controller presentedViewController];
     }
+    return controller;
+}
+
+- (void) showImageFrom:(UIImageView*) imageView {
+    UIViewController * controller = [self rootViewController];
     
     self.tempViewContainer = [[UIView alloc] initWithFrame:controller.view.bounds];
     self.tempViewContainer.backgroundColor = controller.view.backgroundColor;
@@ -66,19 +73,24 @@
     [controller.view addSubview:self.tempViewContainer];
     
     self.controller = controller;
-    [controller.view addSubview:self.view];
     
-    self.view.frame = controller.view.bounds;
+    self.view.frame = controller.view.bounds; //CGRectZero;
     self.view.backgroundColor = [UIColor clearColor];
-    [controller.view addSubview:self.view];
     
+    [controller.view addSubview:self.view];
+
     self.theImageView.image = imageView.image;
     self.originalImageRect = [imageView convertRect:imageView.bounds toView:self.view];
+
     self.theImageView.frame = self.originalImageRect;
+    
+    //listen to the orientation change notification
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+
     
     [UIView animateWithDuration:0.3 animations:^{
         self.view.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.7];
-        self.tempViewContainer.layer.transform = CATransform3DMakeScale(0.8, 0.8, 0.8);
+        self.tempViewContainer.layer.transform = CATransform3DMakeScale(s_backgroundScale, s_backgroundScale, s_backgroundScale);
         self.theImageView.frame = [self centeredOnScreenImage:self.theImageView.image];
     } completion:^(BOOL finished) {
         [self adjustScrollInsetsToCenterImage];
@@ -91,14 +103,46 @@
     imageView.image = nil;
 }
 
+-(void) dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
+}
+
+- (void)orientationDidChange:(NSNotification *)note
+{
+    self.theImageView.frame = [self centeredOnScreenImage:self.theImageView.image];
+
+    CGRect newFrame = [self rootViewController].view.bounds;
+    self.tempViewContainer.frame = newFrame;
+    self.view.frame = newFrame;
+    [self adjustScrollInsetsToCenterImage];
+
+}
+
 - (void) onBackgroundTap {
     CGRect absoluteCGRect = [self.view convertRect:self.theImageView.frame fromView:self.theImageView.superview];
     self.zoomeableScrollView.contentOffset = CGPointZero;
     self.zoomeableScrollView.contentInset = UIEdgeInsetsZero;
     self.theImageView.frame = absoluteCGRect;
     
+    CGRect originalImageRect = [self.originalImage convertRect:self.originalImage.frame toView:self.view];
+    //originalImageRect is now scaled down, need to adjust
+    CGFloat scaleBack = 1.0/s_backgroundScale;
+    CGFloat x = originalImageRect.origin.x;
+    CGFloat y = originalImageRect.origin.y;
+    CGFloat maxX = self.view.frame.size.width;
+    CGFloat maxY = self.view.frame.size.height;
+    
+    y = (y - (maxY / 2.0) ) * scaleBack + (maxY / 2.0);
+    x= (x - (maxX / 2.0) ) * scaleBack + (maxX / 2.0);
+    originalImageRect.origin.x = x;
+    originalImageRect.origin.y = y;
+    
+    originalImageRect.size.width *= 1.0/s_backgroundScale;
+    originalImageRect.size.height *= 1.0/s_backgroundScale;
+    //done scaling
+    
     [UIView animateWithDuration:0.3 animations:^{
-        self.theImageView.frame = self.originalImageRect;
+        self.theImageView.frame = originalImageRect;
         self.view.backgroundColor = [UIColor clearColor];
         self.tempViewContainer.layer.transform = CATransform3DIdentity;
     }completion:^(BOOL finished) {
