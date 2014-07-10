@@ -27,7 +27,14 @@ static CGFloat s_backgroundScale = 0.8f;
 + (void) showImageFrom:(UIImageView*) imageView {
     if (imageView.image) {
         EXPhotoViewer* viewer = [EXPhotoViewer new];
-        [viewer showImageFrom:imageView];
+        [viewer showImageFrom:imageView originalImage:imageView.image];
+    }
+}
+
++ (void) showImageFrom:(UIImageView*) imageView originalImage:(UIImage*)originalImage {
+    if (imageView.image) {
+        EXPhotoViewer* viewer = [EXPhotoViewer new];
+        [viewer showImageFrom:imageView originalImage:originalImage];
     }
 }
 
@@ -59,7 +66,7 @@ static CGFloat s_backgroundScale = 0.8f;
     return controller;
 }
 
-- (void) showImageFrom:(UIImageView*) imageView {
+- (void) showImageFrom:(UIImageView*) imageView originalImage:(UIImage*)originalImage{
     UIViewController * controller = [self rootViewController];
     
     self.tempViewContainer = [[UIView alloc] initWithFrame:controller.view.bounds];
@@ -79,7 +86,8 @@ static CGFloat s_backgroundScale = 0.8f;
     
     [controller.view addSubview:self.view];
 
-    self.theImageView.image = imageView.image;
+    //self.theImageView.image = imageView.image;
+	self.theImageView.image = originalImage;
     self.originalImageRect = [imageView convertRect:imageView.bounds toView:self.view];
 
     self.theImageView.frame = self.originalImageRect;
