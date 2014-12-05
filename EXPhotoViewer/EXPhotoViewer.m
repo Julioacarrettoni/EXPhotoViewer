@@ -11,12 +11,12 @@
 @interface EXPhotoViewer ()
 
 @property (nonatomic, retain) UIScrollView *zoomeableScrollView;
+@property (nonatomic, retain) UIImageView *originalImageView;
 @property (nonatomic, retain) UIImageView *theImageView;
 @property (nonatomic, retain) UIView* tempViewContainer;
 @property (nonatomic, assign) CGRect originalImageRect;
 @property (nonatomic, retain) UIViewController* controller;
 @property (nonatomic, retain) UIViewController* selfController;
-@property (nonatomic, retain) UIImageView* originalImage;
 
 @end
 
@@ -24,11 +24,23 @@ static CGFloat s_backgroundScale = 0.8f;
 
 @implementation EXPhotoViewer
 
-+ (void) showImageFrom:(UIImageView*) imageView {
++ (instancetype)showImageFrom:(UIImageView *)imageView {
+    EXPhotoViewer *viewer = [self newViewerFor:imageView];
+
+    [viewer show];
+
+    return viewer;
+}
+
++ (instancetype)newViewerFor:(UIImageView *)imageView {
+    EXPhotoViewer *viewer = nil;
+
     if (imageView.image) {
-        EXPhotoViewer* viewer = [EXPhotoViewer new];
-        [viewer showImageFrom:imageView];
+        viewer = [EXPhotoViewer new];
+        viewer.originalImageView = imageView;
     }
+
+    return viewer;
 }
 
 -(void)loadView {
@@ -59,7 +71,10 @@ static CGFloat s_backgroundScale = 0.8f;
     return controller;
 }
 
-- (void) showImageFrom:(UIImageView*) imageView {
+- (void)show {
+    if (self.controller)
+        return;
+
     UIViewController * controller = [self rootViewController];
     
     self.tempViewContainer = [[UIView alloc] initWithFrame:controller.view.bounds];
@@ -79,8 +94,8 @@ static CGFloat s_backgroundScale = 0.8f;
     
     [controller.view addSubview:self.view];
 
-    self.theImageView.image = imageView.image;
-    self.originalImageRect = [imageView convertRect:imageView.bounds toView:self.view];
+    self.theImageView.image = self.originalImageView.image;
+    self.originalImageRect = [self.originalImageView convertRect:self.originalImageView.bounds toView:self.view];
 
     self.theImageView.frame = self.originalImageRect;
     
@@ -99,23 +114,19 @@ static CGFloat s_backgroundScale = 0.8f;
     }];
     
     self.selfController = self; //Stupid ARC I need to do this to avoid being dealloced :P
-    self.originalImage = imageView;
-    imageView.image = nil;
 }
 
 -(void) dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
-- (void)orientationDidChange:(NSNotification *)note
-{
+- (void)orientationDidChange:(NSNotification *)note {
     self.theImageView.frame = [self centeredOnScreenImage:self.theImageView.image];
 
     CGRect newFrame = [self rootViewController].view.bounds;
     self.tempViewContainer.frame = newFrame;
     self.view.frame = newFrame;
     [self adjustScrollInsetsToCenterImage];
-
 }
 
 - (void) onBackgroundTap {
@@ -124,7 +135,7 @@ static CGFloat s_backgroundScale = 0.8f;
     self.zoomeableScrollView.contentInset = UIEdgeInsetsZero;
     self.theImageView.frame = absoluteCGRect;
     
-    CGRect originalImageRect = [self.originalImage convertRect:self.originalImage.frame toView:self.view];
+    CGRect originalImageRect = [self.originalImageView convertRect:self.originalImageView.frame toView:self.view];
     //originalImageRect is now scaled down, need to adjust
     CGFloat scaleBack = 1.0/s_backgroundScale;
     CGFloat x = originalImageRect.origin.x;
@@ -146,7 +157,7 @@ static CGFloat s_backgroundScale = 0.8f;
         self.view.backgroundColor = [UIColor clearColor];
         self.tempViewContainer.layer.transform = CATransform3DIdentity;
     }completion:^(BOOL finished) {
-        self.originalImage.image = self.theImageView.image;
+        self.originalImageView.image = self.theImageView.image;
         self.controller.view.backgroundColor = self.tempViewContainer.backgroundColor;
         for (UIView* subView in self.tempViewContainer.subviews) {
             [self.controller.view addSubview:subView];
@@ -156,6 +167,10 @@ static CGFloat s_backgroundScale = 0.8f;
     }];
     
     self.selfController = nil;//Ok ARC you can kill me now.
+}
+
+- (void)close {
+    [self onBackgroundTap];
 }
 
 - (CGRect) centeredOnScreenImage:(UIImage*) image {
