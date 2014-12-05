@@ -137,25 +137,8 @@
         self.zoomeableScrollView.contentInset = UIEdgeInsetsZero;
         self.theImageView.frame = absoluteCGRect;
 
-        CGRect originalImageRect = [self.originalImageView convertRect:self.originalImageView.frame toView:self.view];
-        //originalImageRect is now scaled down, need to adjust
-        CGFloat scaleBack = 1.0/self.backgroundScale;
-        CGFloat x = originalImageRect.origin.x;
-        CGFloat y = originalImageRect.origin.y;
-        CGFloat maxX = self.view.frame.size.width;
-        CGFloat maxY = self.view.frame.size.height;
-
-        y = (y - (maxY / 2.0) ) * scaleBack + (maxY / 2.0);
-        x= (x - (maxX / 2.0) ) * scaleBack + (maxX / 2.0);
-        originalImageRect.origin.x = x;
-        originalImageRect.origin.y = y;
-
-        originalImageRect.size.width *= 1.0/self.backgroundScale;
-        originalImageRect.size.height *= 1.0/self.backgroundScale;
-        //done scaling
-
         [UIView animateWithDuration:0.3 animations:^{
-            self.theImageView.frame = originalImageRect;
+            self.theImageView.frame = self.originalImageRect;
             self.view.backgroundColor = [UIColor clearColor];
             self.tempViewContainer.layer.transform = CATransform3DIdentity;
         }completion:^(BOOL finished) {
@@ -169,7 +152,7 @@
 
             self.isClosing = NO;
         }];
-        
+
         self.selfController = nil;//Ok ARC you can kill me now.
     }
 }
