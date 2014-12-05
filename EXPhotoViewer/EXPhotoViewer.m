@@ -20,8 +20,6 @@
 
 @end
 
-static CGFloat s_backgroundScale = 0.8f;
-
 @implementation EXPhotoViewer
 
 + (instancetype)showImageFrom:(UIImageView *)imageView {
@@ -38,6 +36,7 @@ static CGFloat s_backgroundScale = 0.8f;
     if (imageView.image) {
         viewer = [EXPhotoViewer new];
         viewer.originalImageView = imageView;
+        viewer.backgroundScale = 1.0;
     }
 
     return viewer;
@@ -104,21 +103,20 @@ static CGFloat s_backgroundScale = 0.8f;
 
     
     [UIView animateWithDuration:0.3 animations:^{
-        self.view.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.7];
-        self.tempViewContainer.layer.transform = CATransform3DMakeScale(s_backgroundScale, s_backgroundScale, s_backgroundScale);
+        self.view.backgroundColor = (self.backgroundColor) ? self.backgroundColor : [UIColor blackColor];
+        self.tempViewContainer.layer.transform = CATransform3DMakeScale(self.backgroundScale, self.backgroundScale, self.backgroundScale);
         self.theImageView.frame = [self centeredOnScreenImage:self.theImageView.image];
     } completion:^(BOOL finished) {
         [self adjustScrollInsetsToCenterImage];
-        UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onBackgroundTap)];
+        UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(close)];
         [self.view addGestureRecognizer:tap];
     }];
-    
+
     self.selfController = self; //Stupid ARC I need to do this to avoid being dealloced :P
 }
 
--(void) dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
-}
+-(void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];}
 
 - (void)orientationDidChange:(NSNotification *)note {
     self.theImageView.frame = [self centeredOnScreenImage:self.theImageView.image];
@@ -129,7 +127,7 @@ static CGFloat s_backgroundScale = 0.8f;
     [self adjustScrollInsetsToCenterImage];
 }
 
-- (void) onBackgroundTap {
+- (void)close {
     CGRect absoluteCGRect = [self.view convertRect:self.theImageView.frame fromView:self.theImageView.superview];
     self.zoomeableScrollView.contentOffset = CGPointZero;
     self.zoomeableScrollView.contentInset = UIEdgeInsetsZero;
@@ -137,7 +135,7 @@ static CGFloat s_backgroundScale = 0.8f;
     
     CGRect originalImageRect = [self.originalImageView convertRect:self.originalImageView.frame toView:self.view];
     //originalImageRect is now scaled down, need to adjust
-    CGFloat scaleBack = 1.0/s_backgroundScale;
+    CGFloat scaleBack = 1.0/self.backgroundScale;
     CGFloat x = originalImageRect.origin.x;
     CGFloat y = originalImageRect.origin.y;
     CGFloat maxX = self.view.frame.size.width;
@@ -148,8 +146,8 @@ static CGFloat s_backgroundScale = 0.8f;
     originalImageRect.origin.x = x;
     originalImageRect.origin.y = y;
     
-    originalImageRect.size.width *= 1.0/s_backgroundScale;
-    originalImageRect.size.height *= 1.0/s_backgroundScale;
+    originalImageRect.size.width *= 1.0/self.backgroundScale;
+    originalImageRect.size.height *= 1.0/self.backgroundScale;
     //done scaling
     
     [UIView animateWithDuration:0.3 animations:^{
@@ -167,10 +165,6 @@ static CGFloat s_backgroundScale = 0.8f;
     }];
     
     self.selfController = nil;//Ok ARC you can kill me now.
-}
-
-- (void)close {
-    [self onBackgroundTap];
 }
 
 - (CGRect) centeredOnScreenImage:(UIImage*) image {
