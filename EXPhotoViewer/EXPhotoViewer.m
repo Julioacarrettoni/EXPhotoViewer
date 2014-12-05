@@ -61,7 +61,7 @@
     self.theImageView = imageView;
 }
 
--(UIViewController *) rootViewController{
+-(UIViewController *)rootViewController {
     UIViewController* controller = [UIApplication sharedApplication].keyWindow.rootViewController;
     
     if ([controller presentedViewController]) {
@@ -167,19 +167,18 @@
     self.selfController = nil;//Ok ARC you can kill me now.
 }
 
-- (CGRect) centeredOnScreenImage:(UIImage*) image {
+- (CGRect)centeredOnScreenImage:(UIImage*) image {
     CGSize imageSize = [self imageSizesizeThatFitsForImage:self.theImageView.image];
     CGPoint imageOrigin = CGPointMake(self.view.frame.size.width/2.0 - imageSize.width/2.0, self.view.frame.size.height/2.0 - imageSize.height/2.0);
     return CGRectMake(imageOrigin.x, imageOrigin.y, imageSize.width, imageSize.height);
 }
 
-- (CGSize) imageSizesizeThatFitsForImage:(UIImage*) image {
+- (CGSize)imageSizesizeThatFitsForImage:(UIImage*) image {
     if (!image)
         return CGSizeZero;
     
     CGSize imageSize = image.size;
     CGFloat ratio = MIN(self.view.frame.size.width/imageSize.width, self.view.frame.size.height/imageSize.height);
-    ratio = MIN(ratio, 1.0);//If the image is smaller than the screen let's not make it bigger
     return CGSizeMake(imageSize.width*ratio, imageSize.height*ratio);
 }
 
@@ -188,7 +187,7 @@
     return self.theImageView;
 }
 
-- (void) adjustScrollInsetsToCenterImage {
+- (void)adjustScrollInsetsToCenterImage {
     CGSize imageSize = [self imageSizesizeThatFitsForImage:self.theImageView.image];
     self.zoomeableScrollView.zoomScale = 1.0;
     self.theImageView.frame = CGRectMake(0, 0, imageSize.width, imageSize.height);
