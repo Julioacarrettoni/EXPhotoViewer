@@ -17,6 +17,7 @@
 @property (nonatomic, assign) CGRect originalImageRect;
 @property (nonatomic, retain) UIViewController* controller;
 @property (nonatomic, retain) UIViewController* selfController;
+@property (atomic, readwrite) BOOL isClosing;
 
 @end
 
@@ -34,7 +35,7 @@
     EXPhotoViewer *viewer = nil;
 
     if (imageView.image) {
-        viewer = [EXPhotoViewer new];
+        viewer = [[self alloc] init];
         viewer.originalImageView = imageView;
         viewer.backgroundScale = 1.0;
     }
@@ -128,43 +129,49 @@
 }
 
 - (void)close {
-    CGRect absoluteCGRect = [self.view convertRect:self.theImageView.frame fromView:self.theImageView.superview];
-    self.zoomeableScrollView.contentOffset = CGPointZero;
-    self.zoomeableScrollView.contentInset = UIEdgeInsetsZero;
-    self.theImageView.frame = absoluteCGRect;
-    
-    CGRect originalImageRect = [self.originalImageView convertRect:self.originalImageView.frame toView:self.view];
-    //originalImageRect is now scaled down, need to adjust
-    CGFloat scaleBack = 1.0/self.backgroundScale;
-    CGFloat x = originalImageRect.origin.x;
-    CGFloat y = originalImageRect.origin.y;
-    CGFloat maxX = self.view.frame.size.width;
-    CGFloat maxY = self.view.frame.size.height;
-    
-    y = (y - (maxY / 2.0) ) * scaleBack + (maxY / 2.0);
-    x= (x - (maxX / 2.0) ) * scaleBack + (maxX / 2.0);
-    originalImageRect.origin.x = x;
-    originalImageRect.origin.y = y;
-    
-    originalImageRect.size.width *= 1.0/self.backgroundScale;
-    originalImageRect.size.height *= 1.0/self.backgroundScale;
-    //done scaling
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        self.theImageView.frame = originalImageRect;
-        self.view.backgroundColor = [UIColor clearColor];
-        self.tempViewContainer.layer.transform = CATransform3DIdentity;
-    }completion:^(BOOL finished) {
-        self.originalImageView.image = self.theImageView.image;
-        self.controller.view.backgroundColor = self.tempViewContainer.backgroundColor;
-        for (UIView* subView in self.tempViewContainer.subviews) {
-            [self.controller.view addSubview:subView];
-        }
-        [self.view removeFromSuperview];
-        [self.tempViewContainer removeFromSuperview];
-    }];
-    
-    self.selfController = nil;//Ok ARC you can kill me now.
+    if (!self.isClosing) {
+        self.isClosing = YES;
+
+        CGRect absoluteCGRect = [self.view convertRect:self.theImageView.frame fromView:self.theImageView.superview];
+        self.zoomeableScrollView.contentOffset = CGPointZero;
+        self.zoomeableScrollView.contentInset = UIEdgeInsetsZero;
+        self.theImageView.frame = absoluteCGRect;
+
+        CGRect originalImageRect = [self.originalImageView convertRect:self.originalImageView.frame toView:self.view];
+        //originalImageRect is now scaled down, need to adjust
+        CGFloat scaleBack = 1.0/self.backgroundScale;
+        CGFloat x = originalImageRect.origin.x;
+        CGFloat y = originalImageRect.origin.y;
+        CGFloat maxX = self.view.frame.size.width;
+        CGFloat maxY = self.view.frame.size.height;
+
+        y = (y - (maxY / 2.0) ) * scaleBack + (maxY / 2.0);
+        x= (x - (maxX / 2.0) ) * scaleBack + (maxX / 2.0);
+        originalImageRect.origin.x = x;
+        originalImageRect.origin.y = y;
+
+        originalImageRect.size.width *= 1.0/self.backgroundScale;
+        originalImageRect.size.height *= 1.0/self.backgroundScale;
+        //done scaling
+
+        [UIView animateWithDuration:0.3 animations:^{
+            self.theImageView.frame = originalImageRect;
+            self.view.backgroundColor = [UIColor clearColor];
+            self.tempViewContainer.layer.transform = CATransform3DIdentity;
+        }completion:^(BOOL finished) {
+            self.originalImageView.image = self.theImageView.image;
+            self.controller.view.backgroundColor = self.tempViewContainer.backgroundColor;
+            for (UIView* subView in self.tempViewContainer.subviews) {
+                [self.controller.view addSubview:subView];
+            }
+            [self.view removeFromSuperview];
+            [self.tempViewContainer removeFromSuperview];
+
+            self.isClosing = NO;
+        }];
+        
+        self.selfController = nil;//Ok ARC you can kill me now.
+    }
 }
 
 - (CGRect)centeredOnScreenImage:(UIImage*) image {
