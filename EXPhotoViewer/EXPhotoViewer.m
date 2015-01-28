@@ -98,6 +98,7 @@
     self.originalImageRect = [self.originalImageView convertRect:self.originalImageView.bounds toView:self.view];
 
     self.theImageView.frame = self.originalImageRect;
+    self.theImageView.contentMode = self.originalImageView.contentMode;
     
     //listen to the orientation change notification
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
