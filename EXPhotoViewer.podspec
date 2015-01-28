@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "EXPhotoViewer"
-  s.version      = "1.0.0"
+  s.version      = "1.1.2"
   s.summary      = "A one liner full screen photo viewer"
 
   s.description  = <<-DESC
@@ -35,10 +35,9 @@ Then if for example "anImageView" contains the image you would like to show, jus
   s.platform     = :ios
   s.platform     = :ios, '6.0'
 
-  s.source       = { :git => "https://github.com/Julioacarrettoni/EXPhotoViewer.git", :tag => "1.0.0" }
+  s.source       = { :git => "https://github.com/Julioacarrettoni/EXPhotoViewer.git", :tag => "1.1.2" }
 
   s.source_files = 'EXPhotoViewer/*.{h,m}'
-  s.resource  = 'EXPhotoViewer/*.{xib}'
 
   s.requires_arc = true
 
